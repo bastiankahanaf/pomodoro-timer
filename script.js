@@ -1,5 +1,43 @@
 const CIRCUMFERENCE = 2 * Math.PI * 90;
 
+// Inject toast CSS inline so it works on all devices regardless of stylesheet
+(function () {
+  const s = document.createElement("style");
+  s.textContent = `
+    .pomo-toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1e1e20;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 12px;
+      padding: 14px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      color: #f0ede8;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 99999;
+      width: calc(100vw - 3rem);
+      max-width: 320px;
+      text-align: center;
+      pointer-events: none;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.55);
+    }
+    .pomo-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .pomo-toast strong { font-size: 14px; color: #f0ede8; display: block; }
+    .pomo-toast span   { font-size: 11px; color: rgba(240,237,232,0.5); display: block; }
+  `;
+  document.head.appendChild(s);
+})();
+
 const state = {
   mode: "focus",
   running: false,
@@ -296,6 +334,3 @@ if ("Notification" in window && Notification.permission === "granted") {
 }
 
 updateDisplay();
-
-// TEST — hapus setelah konfirmasi toast muncul
-setTimeout(() => showToast("🎯 Test!", "Toast is working"), 1000);
