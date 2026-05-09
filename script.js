@@ -286,12 +286,22 @@ function updateNotifUI() {
 }
 
 function sendNotification(title, body) {
-  // Browser notification (desktop / Android Chrome)
-  if (state.notifGranted && Notification.permission === "granted") {
+  // Always show in-app toast (all platforms including iOS)
+  showToast(title, body);
+
+  if (!state.notifGranted || Notification.permission !== "granted") return;
+
+  // Use Service Worker for background notifications (works when app is minimized)
+  if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({
+      type: "NOTIFY",
+      title,
+      body,
+    });
+  } else {
+    // Fallback: direct Notification API (foreground only)
     new Notification(title, { body });
   }
-  // In-app toast (works on all platforms including iOS)
-  showToast(title, body);
 }
 
 function showToast(title, body) {
