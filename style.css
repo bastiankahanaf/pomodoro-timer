@@ -1,0 +1,438 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;700;800&display=swap");
+
+:root {
+  --c-bg: #0e0e0f;
+  --c-surface: #161618;
+  --c-border: rgba(255, 255, 255, 0.07);
+  --c-border-hover: rgba(255, 255, 255, 0.15);
+  --c-text: #f0ede8;
+  --c-muted: rgba(240, 237, 232, 0.4);
+  --c-accent: #e8673a;
+  --c-accent-dim: rgba(232, 103, 58, 0.12);
+  --c-green: #3de8a0;
+  --c-blue: #5b9cf6;
+  --font-display: "Syne", sans-serif;
+  --font-mono: "DM Mono", monospace;
+  --r: 12px;
+  --r-sm: 8px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--c-bg);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-display);
+  color: var(--c-text);
+}
+
+#pomo-root {
+  width: 100%;
+  max-width: 560px;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* ── Header ── */
+.pomo-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pomo-wordmark {
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+.pomo-notif-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: transparent;
+  border: 0.5px solid var(--c-border);
+  border-radius: 100px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--c-muted);
+  transition: all 0.2s;
+}
+
+.pomo-notif-btn:hover {
+  border-color: var(--c-border-hover);
+  color: var(--c-text);
+}
+
+.pomo-notif-btn.granted {
+  color: var(--c-green);
+  border-color: rgba(61, 232, 160, 0.3);
+}
+
+.notif-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-muted);
+  flex-shrink: 0;
+}
+
+.pomo-notif-btn.granted .notif-dot {
+  background: var(--c-green);
+}
+
+/* ── Mode Tabs ── */
+.pomo-modes {
+  display: flex;
+  background: var(--c-surface);
+  border: 0.5px solid var(--c-border);
+  border-radius: 100px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.mode-pill {
+  padding: 7px 18px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--c-muted);
+  font-family: var(--font-display);
+  transition: all 0.2s;
+}
+
+.mode-pill:hover {
+  color: var(--c-text);
+}
+
+.mode-pill.active {
+  background: var(--c-accent);
+  color: #fff;
+}
+
+.mode-pill.short.active {
+  background: var(--c-green);
+  color: #0a2a1c;
+}
+
+.mode-pill.long.active {
+  background: var(--c-blue);
+  color: #fff;
+}
+
+/* ── Main Card ── */
+.pomo-card {
+  width: 100%;
+  background: var(--c-surface);
+  border: 0.5px solid var(--c-border);
+  border-radius: var(--r);
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.pomo-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--c-accent), transparent);
+  opacity: 0.4;
+  transition: opacity 0.4s;
+}
+
+.pomo-card.running::before {
+  opacity: 1;
+}
+
+/* ── Progress Ring ── */
+.pomo-progress-ring {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.ring-svg {
+  width: 200px;
+  height: 200px;
+  transform: rotate(-90deg);
+}
+
+.ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 4;
+}
+
+.ring-progress {
+  fill: none;
+  stroke: var(--c-accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 565.5;
+  stroke-dashoffset: 0;
+  transition:
+    stroke-dashoffset 1s linear,
+    stroke 0.3s ease;
+}
+
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.pomo-timer {
+  font-family: var(--font-mono);
+  font-size: 48px;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  color: var(--c-text);
+  line-height: 1;
+}
+
+.pomo-session-label {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+/* ── Session Dots ── */
+.pomo-sessions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.session-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--c-border-hover);
+  transition: all 0.3s;
+}
+
+.session-dot.filled {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.session-dot.current {
+  border-color: var(--c-accent);
+  background: rgba(232, 103, 58, 0.25);
+}
+
+.session-counter-label {
+  font-size: 10px;
+  color: var(--c-muted);
+  letter-spacing: 0.1em;
+  margin-left: 4px;
+}
+
+/* ── Tagline ── */
+.pomo-tagline {
+  font-size: 12px;
+  color: var(--c-muted);
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* ── Controls ── */
+.pomo-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.ctrl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  border-radius: var(--r-sm);
+  border: 0.5px solid var(--c-border);
+  background: transparent;
+  color: var(--c-muted);
+  font-family: var(--font-display);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.18s;
+  padding: 0 18px;
+}
+
+.ctrl-btn:hover {
+  border-color: var(--c-border-hover);
+  color: var(--c-text);
+}
+
+.ctrl-btn i {
+  font-size: 16px;
+}
+
+.ctrl-btn-primary {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  color: #fff;
+  width: 140px;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.ctrl-btn-primary:hover {
+  background: #d45a2e;
+  border-color: #d45a2e;
+  color: #fff;
+}
+
+.ctrl-btn-primary.mode-short {
+  background: var(--c-green);
+  border-color: var(--c-green);
+  color: #0a2a1c;
+}
+
+.ctrl-btn-primary.mode-short:hover {
+  background: #2ecc8a;
+  border-color: #2ecc8a;
+}
+
+.ctrl-btn-primary.mode-long {
+  background: var(--c-blue);
+  border-color: var(--c-blue);
+  color: #fff;
+}
+
+.ctrl-btn-primary.mode-long:hover {
+  background: #4a88e0;
+  border-color: #4a88e0;
+}
+
+/* ── Settings ── */
+.pomo-settings {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.setting-card {
+  background: var(--c-surface);
+  border: 0.5px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setting-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+.setting-input {
+  background: transparent;
+  border: none;
+  border-bottom: 0.5px solid var(--c-border);
+  color: var(--c-text);
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 300;
+  width: 100%;
+  padding: 4px 0;
+  outline: none;
+  transition: border-color 0.2s;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.setting-input::-webkit-inner-spin-button,
+.setting-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.setting-input:focus {
+  border-color: var(--c-accent);
+}
+
+.setting-unit {
+  font-size: 10px;
+  color: var(--c-muted);
+}
+
+/* ── Pulse animation ── */
+@keyframes pulse-timer {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.pomo-card.running .pomo-timer {
+  animation: pulse-timer 2s ease-in-out infinite;
+}
+
+.pomo-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--c-surface);
+  border: 0.5px solid var(--c-border-hover);
+  border-radius: var(--r);
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--c-text);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 999;
+  min-width: 260px;
+  text-align: center;
+}
+
+.pomo-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"
+    />
+  </head>
+  <body>
+    <div id="pomo-root">
+      <div class="pomo-header">
+        <span class="pomo-wordmark">Pomodoro</span>
+        <button class="pomo-notif-btn" id="notifBtn">
+          <span class="notif-dot"></span>
+          <span id="notifLabel">Enable Notifications</span>
+        </button>
+      </div>
+
+      <div class="pomo-modes">
+        <button class="mode-pill active" id="modeFocus">Focus</button>
+        <button class="mode-pill short" id="modeShort">Short break</button>
+        <button class="mode-pill long" id="modeLong">Long break</button>
+      </div>
+
+      <div class="pomo-card" id="pomoCard">
+        <div class="pomo-progress-ring">
+          <svg class="ring-svg" viewBox="0 0 200 200">
+            <circle class="ring-bg" cx="100" cy="100" r="90" />
+            <circle
+              class="ring-progress"
+              id="ringProgress"
+              cx="100"
+              cy="100"
+              r="90"
+            />
+          </svg>
+          <div class="ring-center">
+            <span class="pomo-timer" id="timerDisplay">25:00</span>
+            <span class="pomo-session-label" id="sessionLabel">Focus Time</span>
+          </div>
+        </div>
+
+        <div class="pomo-sessions">
+          <div class="session-dot filled" id="dot0"></div>
+          <div class="session-dot" id="dot1"></div>
+          <div class="session-dot" id="dot2"></div>
+          <div class="session-dot" id="dot3"></div>
+          <span class="session-counter-label" id="sessionCounterLabel"
+            >Session 1 of 4</span
+          >
+        </div>
+
+        <p class="pomo-tagline" id="tagline">
+          Take a breath — you're right on time.
+        </p>
+
+        <div class="pomo-controls">
+          <button class="ctrl-btn" id="resetBtn">
+            <i class="ti ti-refresh"></i> Reset
+          </button>
+          <button class="ctrl-btn ctrl-btn-primary" id="startPauseBtn">
+            <i class="ti ti-player-play" id="playIcon"></i>
+            <span id="startPauseLabel">Start</span>
+          </button>
+          <button class="ctrl-btn" id="skipBtn">
+            Skip <i class="ti ti-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="pomo-settings">
+        <div class="setting-card">
+          <span class="setting-label">Focus</span>
+          <input
+            class="setting-input"
+            type="number"
+            id="inputFocus"
+            value="25"
+            min="1"
+            max="90"
+          />
+          <span class="setting-unit">minutes</span>
+        </div>
+        <div class="setting-card">
+          <span class="setting-label">Short break</span>
+          <input
+            class="setting-input"
+            type="number"
+            id="inputShort"
+            value="5"
+            min="1"
+            max="30"
+          />
+          <span class="setting-unit">minutes</span>
+        </div>
+        <div class="setting-card">
+          <span class="setting-label">Long break</span>
+          <input
+            class="setting-input"
+            type="number"
+            id="inputLong"
+            value="15"
+            min="1"
+            max="60"
+          />
+          <span class="setting-unit">minutes</span>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
