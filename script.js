@@ -291,15 +291,29 @@ function sendNotification(title, body) {
 
   if (!state.notifGranted || Notification.permission !== "granted") return;
 
-  // Use Service Worker for background notifications (works when app is minimized)
+  // Try Service Worker first (works in background on mobile)
   if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage({
       type: "NOTIFY",
       title,
       body,
     });
+  } else if ("serviceWorker" in navigator) {
+    // SW registered but not yet controlling — wait for it then notify
+    navigator.serviceWorker.ready
+      .then((reg) => {
+        reg.showNotification(title, {
+          body,
+          icon: "/icon.png",
+          vibrate: [200, 100, 200],
+        });
+      })
+      .catch(() => {
+        // Final fallback: direct Notification API
+        new Notification(title, { body });
+      });
   } else {
-    // Fallback: direct Notification API (foreground only)
+    // Browser has no SW support — direct Notification API
     new Notification(title, { body });
   }
 }
