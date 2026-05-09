@@ -1,4 +1,4 @@
-const CIRCUMFERENCE = 2 * Math.PI * 90; // r=90
+const CIRCUMFERENCE = 2 * Math.PI * 90;
 
 const state = {
   mode: "focus",
@@ -47,6 +47,44 @@ const modeBtns = {
   long: document.getElementById("modeLong"),
 };
 
+// ── Audio (Web Audio API — no file needed) ────────────────
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx)
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playDing() {
+  try {
+    const ctx = getAudioCtx();
+    // Three gentle chime notes
+    [
+      [523.25, 0],
+      [659.25, 0.18],
+      [783.99, 0.36],
+    ].forEach(([freq, delay]) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+      gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+      gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        ctx.currentTime + delay + 1.2,
+      );
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + 1.2);
+    });
+  } catch (e) {
+    console.warn("Audio playback failed:", e);
+  }
+}
+
 // ── Helpers ───────────────────────────────────────────────
 function getMinutes() {
   return {
@@ -66,35 +104,27 @@ function formatTime(secs) {
 function updateDisplay() {
   const cfg = modeConfig[state.mode];
 
-  // Timer text
   timerDisplay.textContent = formatTime(state.timeLeft);
 
-  // Progress ring
   const ratio = state.totalTime > 0 ? state.timeLeft / state.totalTime : 1;
   const offset = CIRCUMFERENCE * (1 - ratio);
   ringProgress.style.strokeDashoffset = offset;
   ringProgress.style.stroke = cfg.ringColor;
 
-  // Labels
   sessionLabel.textContent = cfg.label;
   tagline.textContent = cfg.tagline;
 
-  // Session dots
   for (let i = 0; i < 4; i++) {
     const dot = document.getElementById("dot" + i);
     dot.classList.remove("filled", "current");
-    if (i < state.session) {
-      dot.classList.add("filled");
-    } else if (i === state.session && state.mode === "focus") {
+    if (i < state.session) dot.classList.add("filled");
+    else if (i === state.session && state.mode === "focus")
       dot.classList.add("current");
-    }
   }
   sessionCounterLabel.textContent = `Session ${Math.min(state.session + 1, 4)} of 4`;
 
-  // Card running state
   pomoCard.classList.toggle("running", state.running);
 
-  // Start/Pause button
   playIcon.className = state.running
     ? "ti ti-player-pause"
     : "ti ti-player-play";
@@ -103,17 +133,18 @@ function updateDisplay() {
   if (state.mode === "short") startPauseBtn.classList.add("mode-short");
   if (state.mode === "long") startPauseBtn.classList.add("mode-long");
 
-  // Mode pills
-  Object.entries(modeBtns).forEach(([key, btn]) => {
-    btn.classList.toggle("active", key === state.mode);
-  });
+  Object.entries(modeBtns).forEach(([key, btn]) =>
+    btn.classList.toggle("active", key === state.mode),
+  );
 
-  // Page title
   document.title = `${formatTime(state.timeLeft)} — Pomodoro`;
 }
 
-// ── Timer logic ───────────────────────────────────────────
+// ── Timer ─────────────────────────────────────────────────
 function toggleTimer() {
+  // Unlock AudioContext on first user interaction
+  if (!state.running) getAudioCtx();
+
   if (state.running) {
     clearInterval(state.interval);
     state.running = false;
@@ -136,6 +167,8 @@ function tick() {
 }
 
 function onSessionEnd() {
+  playDing();
+
   const wasMode = state.mode;
   let title, body;
 
@@ -171,25 +204,18 @@ function resetTimer() {
 
 function switchMode(mode, doReset = true) {
   state.mode = mode;
-  if (doReset) {
-    clearInterval(state.interval);
-    state.running = false;
-    const mins = getMinutes();
-    state.totalTime = mins[mode] * 60;
-    state.timeLeft = state.totalTime;
-  } else {
-    const mins = getMinutes();
-    state.totalTime = mins[mode] * 60;
-    state.timeLeft = state.totalTime;
-  }
+  clearInterval(state.interval);
+  if (doReset) state.running = false;
+  const mins = getMinutes();
+  state.totalTime = mins[mode] * 60;
+  state.timeLeft = state.totalTime;
   updateDisplay();
 }
 
 function skipMode() {
   clearInterval(state.interval);
   state.running = false;
-  const next = state.mode === "focus" ? "short" : "focus";
-  switchMode(next);
+  switchMode(state.mode === "focus" ? "short" : "focus");
 }
 
 // ── Notifications ─────────────────────────────────────────
@@ -222,9 +248,11 @@ function updateNotifUI() {
 }
 
 function sendNotification(title, body) {
+  // Browser notification (desktop / Android Chrome)
   if (state.notifGranted && Notification.permission === "granted") {
     new Notification(title, { body });
   }
+  // In-app toast (works on all platforms including iOS)
   showToast(title, body);
 }
 
@@ -233,7 +261,6 @@ function showToast(title, body) {
   toast.className = "pomo-toast";
   toast.innerHTML = `<strong>${title}</strong><span>${body}</span>`;
   document.body.appendChild(toast);
-
   setTimeout(() => toast.classList.add("show"), 10);
   setTimeout(() => {
     toast.classList.remove("show");
@@ -262,11 +289,10 @@ modeBtns.long.addEventListener("click", () => switchMode("long"));
   });
 });
 
-// Auto-detect if notification already granted
+// Auto-detect if already granted
 if ("Notification" in window && Notification.permission === "granted") {
   state.notifGranted = true;
   updateNotifUI();
 }
 
-// Init
 updateDisplay();

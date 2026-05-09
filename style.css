@@ -8,7 +8,6 @@
   --c-text: #f0ede8;
   --c-muted: rgba(240, 237, 232, 0.4);
   --c-accent: #e8673a;
-  --c-accent-dim: rgba(232, 103, 58, 0.12);
   --c-green: #3de8a0;
   --c-blue: #5b9cf6;
   --font-display: "Syne", sans-serif;
@@ -23,12 +22,19 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   background: var(--c-bg);
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   font-family: var(--font-display);
   color: var(--c-text);
 }
@@ -40,10 +46,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
-/* ── Header ── */
+/* Header */
 .pomo-header {
   width: 100%;
   display: flex;
@@ -63,22 +69,22 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 14px;
+  padding: 6px 12px;
   background: transparent;
   border: 0.5px solid var(--c-border);
   border-radius: 100px;
   cursor: pointer;
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--c-muted);
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .pomo-notif-btn:hover {
   border-color: var(--c-border-hover);
   color: var(--c-text);
 }
-
 .pomo-notif-btn.granted {
   color: var(--c-green);
   border-color: rgba(61, 232, 160, 0.3);
@@ -91,14 +97,14 @@ body {
   background: var(--c-muted);
   flex-shrink: 0;
 }
-
 .pomo-notif-btn.granted .notif-dot {
   background: var(--c-green);
 }
 
-/* ── Mode Tabs ── */
+/* Mode Tabs */
 .pomo-modes {
   display: flex;
+  width: 100%;
   background: var(--c-surface);
   border: 0.5px solid var(--c-border);
   border-radius: 100px;
@@ -107,49 +113,48 @@ body {
 }
 
 .mode-pill {
-  padding: 7px 18px;
+  flex: 1;
+  padding: 7px 8px;
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   cursor: pointer;
   border: none;
   background: transparent;
   color: var(--c-muted);
   font-family: var(--font-display);
   transition: all 0.2s;
+  text-align: center;
+  white-space: nowrap;
 }
-
 .mode-pill:hover {
   color: var(--c-text);
 }
-
 .mode-pill.active {
   background: var(--c-accent);
   color: #fff;
 }
-
 .mode-pill.short.active {
   background: var(--c-green);
   color: #0a2a1c;
 }
-
 .mode-pill.long.active {
   background: var(--c-blue);
   color: #fff;
 }
 
-/* ── Main Card ── */
+/* Main Card */
 .pomo-card {
   width: 100%;
   background: var(--c-surface);
   border: 0.5px solid var(--c-border);
   border-radius: var(--r);
-  padding: 2.5rem 2rem;
+  padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
   position: relative;
   overflow: hidden;
 }
@@ -165,21 +170,20 @@ body {
   opacity: 0.4;
   transition: opacity 0.4s;
 }
-
 .pomo-card.running::before {
   opacity: 1;
 }
 
-/* ── Progress Ring ── */
+/* Progress Ring */
 .pomo-progress-ring {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: min(180px, 52vw);
+  height: min(180px, 52vw);
 }
 
 .ring-svg {
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 100%;
   transform: rotate(-90deg);
 }
 
@@ -213,7 +217,7 @@ body {
 
 .pomo-timer {
   font-family: var(--font-mono);
-  font-size: 48px;
+  font-size: clamp(28px, 9vw, 48px);
   font-weight: 300;
   letter-spacing: -0.03em;
   color: var(--c-text);
@@ -221,17 +225,19 @@ body {
 }
 
 .pomo-session-label {
-  font-size: 10px;
+  font-size: clamp(7px, 2vw, 10px);
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--c-muted);
 }
 
-/* ── Session Dots ── */
+/* Session Dots */
 .pomo-sessions {
   display: flex;
   gap: 6px;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .session-dot {
@@ -241,12 +247,10 @@ body {
   border: 1px solid var(--c-border-hover);
   transition: all 0.3s;
 }
-
 .session-dot.filled {
   background: var(--c-accent);
   border-color: var(--c-accent);
 }
-
 .session-dot.current {
   border-color: var(--c-accent);
   background: rgba(232, 103, 58, 0.25);
@@ -259,106 +263,104 @@ body {
   margin-left: 4px;
 }
 
-/* ── Tagline ── */
+/* Tagline */
 .pomo-tagline {
-  font-size: 12px;
+  font-size: clamp(10px, 3vw, 12px);
   color: var(--c-muted);
   letter-spacing: 0.02em;
   line-height: 1.6;
   text-align: center;
 }
 
-/* ── Controls ── */
+/* Controls */
 .pomo-controls {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
+  width: 100%;
+  justify-content: center;
 }
 
 .ctrl-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   height: 44px;
   border-radius: var(--r-sm);
   border: 0.5px solid var(--c-border);
   background: transparent;
   color: var(--c-muted);
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 11px;
   cursor: pointer;
   transition: all 0.18s;
-  padding: 0 18px;
+  padding: 0 12px;
+  flex: 1;
+  max-width: 100px;
 }
-
 .ctrl-btn:hover {
   border-color: var(--c-border-hover);
   color: var(--c-text);
 }
-
 .ctrl-btn i {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .ctrl-btn-primary {
   background: var(--c-accent);
   border-color: var(--c-accent);
   color: #fff;
-  width: 140px;
+  flex: 2;
+  max-width: 160px;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 12px;
 }
-
 .ctrl-btn-primary:hover {
   background: #d45a2e;
   border-color: #d45a2e;
   color: #fff;
 }
-
 .ctrl-btn-primary.mode-short {
   background: var(--c-green);
   border-color: var(--c-green);
   color: #0a2a1c;
 }
-
 .ctrl-btn-primary.mode-short:hover {
   background: #2ecc8a;
   border-color: #2ecc8a;
 }
-
 .ctrl-btn-primary.mode-long {
   background: var(--c-blue);
   border-color: var(--c-blue);
   color: #fff;
 }
-
 .ctrl-btn-primary.mode-long:hover {
   background: #4a88e0;
   border-color: #4a88e0;
 }
 
-/* ── Settings ── */
+/* Settings */
 .pomo-settings {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
 }
 
 .setting-card {
   background: var(--c-surface);
   border: 0.5px solid var(--c-border);
   border-radius: var(--r-sm);
-  padding: 12px 14px;
+  padding: 12px 10px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
 .setting-label {
-  font-size: 10px;
-  letter-spacing: 0.12em;
+  font-size: 9px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--c-muted);
 }
@@ -369,7 +371,7 @@ body {
   border-bottom: 0.5px solid var(--c-border);
   color: var(--c-text);
   font-family: var(--font-mono);
-  font-size: 20px;
+  font-size: clamp(15px, 4.5vw, 20px);
   font-weight: 300;
   width: 100%;
   padding: 4px 0;
@@ -378,22 +380,20 @@ body {
   appearance: textfield;
   -moz-appearance: textfield;
 }
-
 .setting-input::-webkit-inner-spin-button,
 .setting-input::-webkit-outer-spin-button {
   -webkit-appearance: none;
 }
-
 .setting-input:focus {
   border-color: var(--c-accent);
 }
 
 .setting-unit {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--c-muted);
 }
 
-/* ── Pulse animation ── */
+/* Pulse animation */
 @keyframes pulse-timer {
   0% {
     opacity: 1;
@@ -405,16 +405,16 @@ body {
     opacity: 1;
   }
 }
-
 .pomo-card.running .pomo-timer {
   animation: pulse-timer 2s ease-in-out infinite;
 }
 
+/* Toast */
 .pomo-toast {
   position: fixed;
-  bottom: 2rem;
+  bottom: 1.5rem;
   left: 50%;
-  transform: translateX(-50%) translateY(20px);
+  transform: translateX(-50%) translateY(16px);
   background: var(--c-surface);
   border: 0.5px solid var(--c-border-hover);
   border-radius: var(--r);
@@ -428,11 +428,45 @@ body {
   opacity: 0;
   transition: all 0.3s ease;
   z-index: 999;
-  min-width: 260px;
+  width: calc(100% - 3rem);
+  max-width: 320px;
   text-align: center;
+  pointer-events: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
-
 .pomo-toast.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+.pomo-toast strong {
+  font-size: 13px;
+  color: var(--c-text);
+}
+.pomo-toast span {
+  font-size: 11px;
+  color: var(--c-muted);
+}
+
+/* Mobile */
+@media (max-width: 400px) {
+  #pomo-root {
+    padding: 1.25rem 1rem;
+    gap: 1rem;
+  }
+  .pomo-card {
+    padding: 1.5rem 1rem;
+    gap: 1rem;
+  }
+  .mode-pill {
+    font-size: 9px;
+    padding: 6px 4px;
+  }
+  .ctrl-btn {
+    height: 40px;
+    font-size: 10px;
+    padding: 0 8px;
+  }
+  .setting-card {
+    padding: 10px 8px;
+  }
 }
