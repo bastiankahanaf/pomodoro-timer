@@ -296,3 +296,6 @@ if ("Notification" in window && Notification.permission === "granted") {
 }
 
 updateDisplay();
+
+// TEST — hapus setelah konfirmasi toast muncul
+setTimeout(() => showToast("🎯 Test!", "Toast is working"), 1000);
